@@ -1,0 +1,183 @@
+
+<style>
+#hw{font-family:var(--font-sans);padding:1rem 0.5rem}
+.challenge{font-size:12px;color:var(--color-text-secondary);text-align:center;margin-bottom:6px;letter-spacing:.04em}
+.bits{display:flex;flex-wrap:wrap;gap:4px;justify-content:center;margin-bottom:1.25rem}
+.bt{width:28px;height:32px;border-radius:5px;display:flex;align-items:center;justify-content:center;font-family:var(--font-mono);font-size:15px;font-weight:700;background:var(--color-background-secondary);color:var(--color-text-tertiary);border:.5px solid var(--color-border-tertiary);transition:all .15s}
+.bt.past{background:#E1F5EE;color:#085041;border-color:#5DCAA5}
+.bt.c0{background:#1D9E75;color:#fff;transform:scale(1.2);border-color:#0F6E56}
+.bt.c1{background:#534AB7;color:#fff;transform:scale(1.2);border-color:#3C3489}
+.bt.sep{width:10px;background:none!important;border:none!important;pointer-events:none}
+#dec{font-family:var(--font-mono);font-size:28px;font-weight:700;letter-spacing:8px;color:var(--color-text-primary);min-height:42px;text-align:center;margin:.5rem 0 .25rem}
+.msg{font-size:12px;color:var(--color-text-secondary);text-align:center;min-height:20px;margin-bottom:.75rem}
+.ctls{display:flex;gap:10px;justify-content:center}
+@media(prefers-color-scheme:dark){.bt.past{background:#085041;color:#9FE1CB;border-color:#1D9E75}}
+</style>
+
+<div id="hw">
+  <p class="challenge">Can you decode this? Traverse the tree — one bit at a time</p>
+  <div class="bits" id="bits"></div>
+
+  <svg viewBox="0 0 680 385" style="width:100%;display:block" role="img" aria-label="Interactive Huffman coding tree">
+    <line id="e-root-n8"  x1="344" y1="45"  x2="146" y2="140" stroke-width="2"/>
+    <line id="e-root-n10" x1="344" y1="45"  x2="543" y2="140" stroke-width="2"/>
+    <line id="e-n8-o"     x1="146" y1="140" x2="65"  y2="207" stroke-width="2"/>
+    <line id="e-n8-n4"    x1="146" y1="140" x2="227" y2="235" stroke-width="2"/>
+    <line id="e-n10-n5"   x1="543" y1="140" x2="457" y2="235" stroke-width="2"/>
+    <line id="e-n10-d"    x1="543" y1="140" x2="630" y2="207" stroke-width="2"/>
+    <line id="e-n4-e"     x1="227" y1="235" x2="170" y2="307" stroke-width="2"/>
+    <line id="e-n4-g"     x1="227" y1="235" x2="285" y2="307" stroke-width="2"/>
+    <line id="e-n5-s"     x1="457" y1="235" x2="400" y2="307" stroke-width="2"/>
+    <line id="e-n5-sp"    x1="457" y1="235" x2="515" y2="307" stroke-width="2"/>
+
+    <g font-family="monospace" font-size="12" font-weight="700">
+      <text x="271" y="80"  fill="#1D9E75">0</text><text x="416" y="80"  fill="#534AB7">1</text>
+      <text x="93"  y="170" fill="#1D9E75">0</text><text x="196" y="178" fill="#534AB7">1</text>
+      <text x="506" y="178" fill="#1D9E75">0</text><text x="591" y="170" fill="#534AB7">1</text>
+      <text x="191" y="263" fill="#1D9E75">0</text><text x="256" y="263" fill="#534AB7">1</text>
+      <text x="418" y="263" fill="#1D9E75">0</text><text x="484" y="263" fill="#534AB7">1</text>
+    </g>
+
+    <circle id="ci-root" cx="344" cy="45"  r="22" stroke-width="1.5"/>
+    <circle id="ci-n8"   cx="146" cy="140" r="22" stroke-width="1.5"/>
+    <circle id="ci-n10"  cx="543" cy="140" r="22" stroke-width="1.5"/>
+    <circle id="ci-n4"   cx="227" cy="235" r="22" stroke-width="1.5"/>
+    <circle id="ci-n5"   cx="457" cy="235" r="22" stroke-width="1.5"/>
+
+    <g font-family="monospace" font-size="13" font-weight="600" text-anchor="middle" dominant-baseline="central">
+      <text id="ct-root" x="344" y="45">18</text>
+      <text id="ct-n8"   x="146" y="140">8</text>
+      <text id="ct-n10"  x="543" y="140">10</text>
+      <text id="ct-n4"   x="227" y="235">4</text>
+      <text id="ct-n5"   x="457" y="235">5</text>
+    </g>
+
+    <rect id="lr-o"  x="27"  y="207" width="76" height="56" rx="8" stroke-width="1.5"/>
+    <rect id="lr-d"  x="592" y="207" width="76" height="56" rx="8" stroke-width="1.5"/>
+    <rect id="lr-e"  x="132" y="307" width="76" height="56" rx="8" stroke-width="1.5"/>
+    <rect id="lr-g"  x="247" y="307" width="76" height="56" rx="8" stroke-width="1.5"/>
+    <rect id="lr-s"  x="362" y="307" width="76" height="56" rx="8" stroke-width="1.5"/>
+    <rect id="lr-sp" x="477" y="307" width="76" height="56" rx="8" stroke-width="1.5"/>
+
+    <g font-family="monospace" text-anchor="middle">
+      <text id="lc-o"  x="65"  y="228" font-size="15" font-weight="600">'o'</text>
+      <text id="lk-o"  x="65"  y="245" font-size="11">00</text>
+      <text id="lf-o"  x="65"  y="257" font-size="10">freq 4</text>
+      <text id="lc-d"  x="630" y="228" font-size="15" font-weight="600">'d'</text>
+      <text id="lk-d"  x="630" y="245" font-size="11">11</text>
+      <text id="lf-d"  x="630" y="257" font-size="10">freq 5</text>
+      <text id="lc-e"  x="170" y="328" font-size="15" font-weight="600">'e'</text>
+      <text id="lk-e"  x="170" y="345" font-size="11">010</text>
+      <text id="lf-e"  x="170" y="357" font-size="10">freq 2</text>
+      <text id="lc-g"  x="285" y="328" font-size="15" font-weight="600">'g'</text>
+      <text id="lk-g"  x="285" y="345" font-size="11">011</text>
+      <text id="lf-g"  x="285" y="357" font-size="10">freq 2</text>
+      <text id="lc-s"  x="400" y="328" font-size="15" font-weight="600">'s'</text>
+      <text id="lk-s"  x="400" y="345" font-size="11">100</text>
+      <text id="lf-s"  x="400" y="357" font-size="10">freq 2</text>
+      <text id="lc-sp" x="515" y="328" font-size="15" font-weight="600">' '</text>
+      <text id="lk-sp" x="515" y="345" font-size="11">101</text>
+      <text id="lf-sp" x="515" y="357" font-size="10">freq 3</text>
+    </g>
+  </svg>
+
+  <div id="dec">?</div>
+  <div class="msg" id="msg">Press "Next bit →" to start decoding</div>
+  <div class="ctls">
+    <button id="btnNext" onclick="stepFwd()">Next bit →</button>
+    <button onclick="doReset()">Reset</button>
+  </div>
+</div>
+
+<script>
+const BITS="0110000111011100011";
+const GROUPS=[3,2,2,2,3,2,2,3];
+const TREE={id:'root',freq:18,left:{id:'n8',freq:8,left:{id:'leaf_o',char:'o',freq:4},right:{id:'n4',freq:4,left:{id:'leaf_e',char:'e',freq:2},right:{id:'leaf_g',char:'g',freq:2}}},right:{id:'n10',freq:10,left:{id:'n5',freq:5,left:{id:'leaf_s',char:'s',freq:2},right:{id:'leaf_sp',char:' ',freq:3}},right:{id:'leaf_d',char:'d',freq:5}}};
+const EM={'root-0':'e-root-n8','root-1':'e-root-n10','n8-0':'e-n8-o','n8-1':'e-n8-n4','n10-0':'e-n10-n5','n10-1':'e-n10-d','n4-0':'e-n4-e','n4-1':'e-n4-g','n5-0':'e-n5-s','n5-1':'e-n5-sp'};
+
+const dk=matchMedia('(prefers-color-scheme:dark)').matches;
+const C={iD:dk?'#085041':'#E1F5EE',iS:dk?'#5DCAA5':'#1D9E75',iA:'#1D9E75',iP:dk?'#0F6E56':'#9FE1CB',itD:dk?'#9FE1CB':'#085041',itA:'#fff',lD:dk?'#26215C':'#EEEDFE',lS:dk?'#AFA9EC':'#534AB7',lA:'#534AB7',ltD:dk?'#EEEDFE':'#26215C',ltA:'#fff',lkD:dk?'#AFA9EC':'#534AB7',lfD:dk?'#CECBF6':'#7F77DD',eD:dk?'rgba(255,255,255,.15)':'#ddd'};
+
+let idx=0,cur=TREE,dec='',path=['root'],edges=[],locked=false;
+
+(function(){
+  const c=document.getElementById('bits');
+  let gi=0,gc=0,gl=GROUPS[0];
+  BITS.split('').forEach((b,i)=>{
+    if(gc===gl&&gi<GROUPS.length-1){const s=document.createElement('div');s.className='bt sep';c.appendChild(s);gi++;gc=0;gl=GROUPS[gi];}
+    const el=document.createElement('div');el.className='bt';el.id='b'+i;el.textContent=b;c.appendChild(el);gc++;
+  });
+})();
+
+function sI(id,st){
+  const ci=document.getElementById('ci-'+id),ct=document.getElementById('ct-'+id);if(!ci)return;
+  if(st==='active'){ci.setAttribute('fill',C.iA);ci.setAttribute('stroke',C.iS);ct.setAttribute('fill',C.itA);}
+  else if(st==='path'){ci.setAttribute('fill',C.iP);ci.setAttribute('stroke',C.iS);ct.setAttribute('fill',C.itD);}
+  else{ci.setAttribute('fill',C.iD);ci.setAttribute('stroke',C.iS);ct.setAttribute('fill',C.itD);}
+}
+function sL(id,st){
+  const s=id.replace('leaf_','');
+  const r=document.getElementById('lr-'+s),lc=document.getElementById('lc-'+s),lk=document.getElementById('lk-'+s),lf=document.getElementById('lf-'+s);
+  if(!r)return;
+  if(st==='active'){r.setAttribute('fill',C.lA);r.setAttribute('stroke',C.lS);lc.setAttribute('fill',C.ltA);lk.setAttribute('fill','#CECBF6');lf.setAttribute('fill','#AFA9EC');}
+  else{r.setAttribute('fill',C.lD);r.setAttribute('stroke',C.lS);lc.setAttribute('fill',C.ltD);lk.setAttribute('fill',C.lkD);lf.setAttribute('fill',C.lfD);}
+}
+function sE(id,bit){const e=document.getElementById(id);if(!e)return;e.setAttribute('stroke',bit==='0'?'#1D9E75':'#534AB7');e.setAttribute('stroke-width','2.5');}
+function cE(id){const e=document.getElementById(id);if(!e)return;e.setAttribute('stroke',C.eD);e.setAttribute('stroke-width','2');}
+
+function resetAll(){
+  ['root','n8','n10','n4','n5'].forEach(id=>sI(id,'default'));
+  ['leaf_o','leaf_d','leaf_e','leaf_g','leaf_s','leaf_sp'].forEach(id=>sL(id,'default'));
+  Object.values(EM).forEach(e=>cE(e));
+  sI('root','active');
+}
+
+function stepFwd(){
+  if(idx>=BITS.length||locked)return;
+  locked=true;
+  const bit=BITS[idx],pid=cur.id;
+  document.getElementById('b'+idx).className='bt '+(bit==='0'?'c0':'c1');
+  const ek=pid+'-'+bit;
+  if(EM[ek]){edges.push(EM[ek]);sE(EM[ek],bit);}
+  cur=bit==='0'?cur.left:cur.right;
+  idx++;
+  path.push(cur.id);
+  if(cur.char!==undefined){
+    sL(cur.id,'active');
+    dec+=cur.char;
+    document.getElementById('dec').textContent=dec+(idx<BITS.length?'…':'');
+    const ch=cur.char===' '?'SPACE':"'"+cur.char+"'";
+    document.getElementById('msg').textContent='✓ Found: '+ch+' — returning to root';
+    for(let i=0;i<idx;i++){const el=document.getElementById('b'+i);if(el)el.className='bt past';}
+    setTimeout(()=>{
+      sL(cur.id,'default');
+      edges.forEach(e=>cE(e));edges=[];
+      cur=TREE;path=['root'];
+      if(idx>=BITS.length){
+        document.getElementById('dec').textContent=dec;
+        document.getElementById('msg').textContent='Decoded: "'+dec+'" 🎉';
+        document.getElementById('btnNext').disabled=true;
+      } else {
+        document.getElementById('msg').textContent='Back at root — next bit!';
+        sI('root','active');
+      }
+      locked=false;
+    },650);
+  } else {
+    ['root','n8','n10','n4','n5'].forEach(id=>sI(id,'default'));
+    path.forEach((id,i)=>{if(!id.startsWith('leaf'))sI(id,i===path.length-1?'active':'path');});
+    document.getElementById('msg').textContent='bit '+bit+' → go '+(bit==='0'?'left ←':'right →')+'  (node freq: '+cur.freq+')';
+    locked=false;
+  }
+}
+
+function doReset(){
+  idx=0;cur=TREE;dec='';path=['root'];edges=[];locked=false;
+  BITS.split('').forEach((_,i)=>{document.getElementById('b'+i).className='bt';});
+  document.getElementById('dec').textContent='?';
+  document.getElementById('msg').textContent='Press "Next bit →" to start decoding';
+  document.getElementById('btnNext').disabled=false;
+  resetAll();
+}
+resetAll();
+</script>
